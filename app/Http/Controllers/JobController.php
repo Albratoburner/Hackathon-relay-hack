@@ -67,7 +67,43 @@ class JobController extends Controller
         ]);
 
         $maxResults = $validated['max_results'] ?? 20;
-        $skillsJson = isset($validated['required_skills']) ? json_encode($validated['required_skills']) : null;
+
+        // Build RequiredSkills JSON in the object structure the stored procedure expects.
+        $skillsJson = null;
+        if (!empty($validated['required_skills'])) {
+            $rawSkills = $validated['required_skills'];
+
+            // If the form submitted numeric IDs (most likely), convert them to objects with defaults
+            $skillsFromDb = Skill::whereIn('skill_id', $rawSkills)->get()->keyBy('skill_id');
+
+            $payload = [];
+            foreach ($rawSkills as $s) {
+                // if it's already an associative array/object with skillName, use it as-is
+                if (is_array($s) && isset($s['skillName'])) {
+                    $payload[] = $s;
+                    continue;
+                }
+
+                $skillName = null;
+                if (is_numeric($s) && isset($skillsFromDb[$s])) {
+                    $skillName = $skillsFromDb[$s]->skill_name;
+                } elseif (is_string($s)) {
+                    // allow strings containing a skill name
+                    $skillName = $s;
+                }
+
+                if ($skillName) {
+                    $payload[] = [
+                        'skillName' => $skillName,
+                        'weight' => 1,
+                        'tier' => 'required',
+                        'minLevel' => 1
+                    ];
+                }
+            }
+
+            $skillsJson = count($payload) ? json_encode($payload, JSON_UNESCAPED_UNICODE) : null;
+        }
 
         try {
             // Call stored procedure

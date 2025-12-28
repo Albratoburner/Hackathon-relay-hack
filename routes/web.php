@@ -22,7 +22,8 @@ Route::prefix('jobs')->name('jobs.')->group(function () {
     Route::post('/{id}/rank', [JobController::class, 'rank'])->name('rank');
 });
 
-// Candidate Profile
+// Candidate listing and profile
+Route::get('/candidates', [CandidateWebController::class, 'index'])->name('candidates.index');
 Route::get('/candidates/{id}', [CandidateWebController::class, 'show'])->name('candidates.show');
 
 // Client View Routes

@@ -44,7 +44,7 @@
                                 <td class="px-4 py-3 font-semibold text-gray-700">{{ $index + 1 }}</td>
                                 <td class="px-4 py-3">
                                     <a href="/candidates/{{ $candidate->candidate_id }}" class="text-blue-600 hover:underline font-medium">
-                                        {{ $candidate->candidate_name }}
+                                        {{ $candidate->full_name }}
                                     </a>
                                 </td>
                                 <td class="px-4 py-3 text-right font-bold text-lg text-gray-800">{{ number_format($candidate->total_score, 2) }}</td>

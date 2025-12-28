@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class JobOrder extends Model
 {
     protected $primaryKey = 'job_id';
-    public $incrementing = false;
     protected $keyType = 'int';
 
     protected $fillable = [

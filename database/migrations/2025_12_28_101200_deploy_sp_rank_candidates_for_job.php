@@ -11,9 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $path = database_path('sql/sp_RankCandidatesForJob.sql');
+        $path = base_path('sql/sp_RankCandidatesForJob.sql');
         if (File::exists($path)) {
-            DB::unprepared(File::get($path));
+            $sql = File::get($path);
+            
+            // Split by GO and execute each batch
+            $batches = array_filter(array_map('trim', preg_split('/\bGO\b/i', $sql)));
+            
+            foreach ($batches as $batch) {
+                if (!empty($batch)) {
+                    DB::unprepared($batch);
+                }
+            }
         }
     }
 

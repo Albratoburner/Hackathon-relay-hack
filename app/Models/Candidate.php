@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Candidate extends Model
 {
     protected $primaryKey = 'candidate_id';
-    public $incrementing = false;
     protected $keyType = 'int';
 
     protected $fillable = [

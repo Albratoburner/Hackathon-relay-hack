@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RankingController;
+use App\Http\Controllers\JobOrderController;
+use App\Http\Controllers\CandidateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,10 @@ use App\Http\Controllers\RankingController;
 |
 */
 
+// Job Order routes
+Route::get('/jobs', [JobOrderController::class, 'index']);
+Route::get('/jobs/{id}', [JobOrderController::class, 'show']);
 Route::post('/jobs/{jobId}/rank', [RankingController::class, 'rank']);
+
+// Candidate routes
+Route::get('/candidates/{id}', [CandidateController::class, 'show']);

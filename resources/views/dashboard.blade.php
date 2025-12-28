@@ -4,7 +4,17 @@
 
 @section('content')
 <div>
-    <h1 class="text-3xl font-bold mb-8 text-gray-800">Recruiter Dashboard</h1>
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Recruiter Dashboard</h1>
+        <div class="flex gap-3">
+            <a href="{{ route('jobs.create') }}" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md hover:shadow-lg">
+                + New Job
+            </a>
+            <a href="{{ route('candidates.create') }}" class="bg-green-600 text-white px-6 py-2.5 rounded-lg hover:bg-green-700 transition font-semibold shadow-md hover:shadow-lg">
+                + New Candidate
+            </a>
+        </div>
+    </div>
     
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

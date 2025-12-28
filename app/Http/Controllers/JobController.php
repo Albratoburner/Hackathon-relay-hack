@@ -41,6 +41,45 @@ class JobController extends Controller
     }
 
     /**
+     * Show the form for creating a new job.
+     */
+    public function create()
+    {
+        return view('jobs.create');
+    }
+
+    /**
+     * Store a newly created job.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'job_title' => 'required|string|max:100',
+            'job_description' => 'nullable|string',
+            'min_experience_years' => 'required|integer|min:0',
+            'preferred_location' => 'nullable|string|max:50',
+            'availability_type' => 'required|string|in:full_time,part_time,contract,temporary',
+            'max_results' => 'nullable|integer|min:1|max:50',
+            'posted_date' => 'nullable|date',
+            'status' => 'nullable|string|in:open,reviewing,filled',
+        ]);
+
+        // Set defaults
+        $validated['posted_date'] = $validated['posted_date'] ?? Carbon::today();
+        $validated['status'] = $validated['status'] ?? 'open';
+        $validated['max_results'] = $validated['max_results'] ?? 10;
+
+        // Get next ID
+        $maxId = DB::table('job_orders')->max('job_id');
+        $validated['job_id'] = ($maxId ?? 0) + 1;
+
+        $job = JobOrder::create($validated);
+
+        return redirect()->route('jobs.show', $job->job_id)
+            ->with('success', 'Job created successfully!');
+    }
+
+    /**
      * Display the job details and ranking form.
      */
     public function show($id)

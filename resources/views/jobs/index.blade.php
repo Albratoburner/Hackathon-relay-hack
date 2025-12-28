@@ -4,7 +4,12 @@
 
 @section('content')
 <div>
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">Job Orders</h1>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Job Orders</h1>
+        <a href="{{ route('jobs.create') }}" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md hover:shadow-lg">
+            + New Job
+        </a>
+    </div>
     
     <!-- Search & Filter -->
     <form method="GET" action="/jobs" class="bg-white p-4 rounded-lg shadow mb-6">

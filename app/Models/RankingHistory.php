@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RankingHistory extends Model
 {
@@ -17,4 +18,14 @@ class RankingHistory extends Model
         'execution_date' => 'datetime',
         'selected_by_recruiter' => 'boolean',
     ];
+
+    public function candidate(): BelongsTo
+    {
+        return $this->belongsTo(Candidate::class, 'candidate_id', 'candidate_id');
+    }
+
+    public function job(): BelongsTo
+    {
+        return $this->belongsTo(JobOrder::class, 'job_id', 'job_id');
+    }
 }

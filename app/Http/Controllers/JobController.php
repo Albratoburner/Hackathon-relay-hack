@@ -72,10 +72,11 @@ class JobController extends Controller
         // Get next ID
         $maxId = DB::table('job_orders')->max('job_id');
         $validated['job_id'] = ($maxId ?? 0) + 1;
+        $newJobId = $validated['job_id'];
 
         $job = JobOrder::create($validated);
 
-        return redirect()->route('jobs.show', $job->job_id)
+        return redirect()->route('jobs.show', $newJobId)
             ->with('success', 'Job created successfully!');
     }
 

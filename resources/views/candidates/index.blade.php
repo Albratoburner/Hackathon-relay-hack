@@ -8,6 +8,15 @@
         <h1 class="text-3xl font-bold text-gray-800">Candidates</h1>
         <div class="flex flex-col sm:flex-row gap-3">
             <form method="GET" action="/candidates" class="flex items-center gap-2">
+                <select 
+                    name="status" 
+                    class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" 
+                    onchange="this.form.submit()"
+                >
+                    <option value="active" {{ request('status', 'active') == 'active' ? 'selected' : '' }}>Active Only</option>
+                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive Only</option>
+                    <option value="all" {{ request('status') == 'all' ? 'selected' : '' }}>All Candidates</option>
+                </select>
                 <input 
                     type="text" 
                     name="search" 

@@ -1,59 +1,121 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# RealyHack — Intelligent Candidate Ranking Subsystem
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This repository contains a database-centric subsystem for staffing software focused on candidate sourcing, screening, shortlisting and assignment ranking. The project is implemented with Laravel (PHP) and MS SQL Server stored procedures that accept and return JSON payloads for business logic.
 
-## About Laravel
+**What this repo demonstrates**
+- A production-quality stored procedure that ranks candidates for a job using JSON inputs/outputs.
+- Database-driven business logic with advanced SQL techniques (CTEs, window functions, temporary tables, TRY/CATCH).
+- A working Laravel backend + Blade/Tailwind frontend that exposes API endpoints and UI pages for jobs, candidates and ranking results.
+- Seeders and migrations to reproduce the demo data and schema.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Key files**
+- SQL stored procedure: [sql/sp_RankCandidatesForJob.sql](sql/sp_RankCandidatesForJob.sql)
+- Stored-procedure deploy migration: [database/migrations/2025_12_28_101200_deploy_sp_rank_candidates_for_job.php](database/migrations/2025_12_28_101200_deploy_sp_rank_candidates_for_job.php)
+- Job seeder example: [database/seeders/JobOrderSeeder.php](database/seeders/JobOrderSeeder.php)
+- API tests: [tests/Feature/RankingApiTest.php](tests/Feature/RankingApiTest.php)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Project Goals**
+- Showcase a realistic candidate ranking workflow used by staffing platforms.
+- Keep the business logic inside MS SQL Server using stored procedures and JSON for robust, portable, and auditable decision making.
+- Provide a usable UI for recruiters to run ranking jobs and inspect results.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Tech stack**
+- Backend: Laravel (PHP)
+- Database: MS SQL Server (stored procedures, JSON input/output)
+- Frontend: Laravel Blade + Tailwind CSS (Alpine.js where needed)
+- Tests: PHPUnit / Laravel Test Suite
 
-## Learning Laravel
+**Quickstart — Local (Windows)**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Prerequisites:
+- PHP 8.1+ (matching composer requirements)
+- Composer
+- Node.js + npm
+- MS SQL Server (local or network) with a user that can create databases, objects, and run stored procedures
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Steps:
 
-## Laravel Sponsors
+1. Copy the environment template and update DB connection values:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+copy .env.example .env
+# Edit .env to point to your SQL Server (DB_CONNECTION=sqlsrv, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD)
+```
 
-### Premium Partners
+2. Install PHP and JS dependencies:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+composer install
+npm install
+npm run build
+```
 
-## Contributing
+3. Run migrations and seeders (this project includes seed data for demo jobs and candidates):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan migrate
+php artisan db:seed --class=JobOrderSeeder
+php artisan db:seed --class=CandidateSeeder
+```
 
-## Code of Conduct
+4. Deploy the ranking stored procedure (migration should already manage this, but you can run the SQL directly):
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```sql
+-- Run the file: sql/sp_RankCandidatesForJob.sql on your SQL Server instance
+```
 
-## Security Vulnerabilities
+5. Serve the app:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan serve
+```
 
-## License
+Open the app in your browser at http://127.0.0.1:8000 and use the Jobs / Candidates pages to exercise the ranking workflow.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Stored Procedure — JSON Input/Output**
+
+The stored procedure accepts a JSON payload describing the job request and skill weights, and returns a JSON array of ranked candidates including score breakdowns. See [sql/sp_RankCandidatesForJob.sql](sql/sp_RankCandidatesForJob.sql) for the exact parameters and example payload.
+
+Suggested JSON input shape (example):
+
+```json
+{
+  "jobId": 123,
+  "requiredSkills": [{"skillId": 4, "minLevel": 3},{"skillId": 8, "minLevel":2}],
+  "weights": {"skill":0.5, "experience":0.25, "availability":0.15, "location":0.1}
+}
+```
+
+Output is a JSON array where each element contains candidate id, overall score, and component scores.
+
+**API / Integration**
+- The project exposes REST endpoints in `routes/api.php` to run the ranking procedure and fetch results. The stored procedure is the source of truth for ranking logic and can be called from any backend (including .NET) for integration.
+
+**Testing**
+
+Run the test suite with:
+
+```bash
+php artisan test
+```
+
+Focus tests: [tests/Feature/RankingApiTest.php](tests/Feature/RankingApiTest.php) validates the ranking API behavior.
+
+**Presentation & Demo Tips**
+- Include a short (2–5 minute) demo video showing: job creation, running ranking, and viewing candidate score breakdown.
+- Add screenshots of the ranking results and the SQL JSON input/output examples.
+
+**Future enhancements**
+- Add a .NET API wrapper to demonstrate cross-stack integration with the stored procedure.
+- Angular front-end option for a single-page recruiter UI.
+- Timesheets, invoicing and payroll integration to expand the lifecycle coverage.
+
+**Contributing**
+Contributions are welcome — please open an issue or a pull request with a short description of the change and a test or example.
+
+**License**
+This project is provided for demonstration; add a license file if you plan to publish or share it externally.
+
+---
+
+If you want, I can also: add demo screenshots, generate a short demo script, or create a simple .NET wrapper that calls the stored procedure. Tell me which one to do next.

@@ -31,6 +31,9 @@ Route::get('/candidates', [CandidateWebController::class, 'index'])->name('candi
 Route::get('/candidates/create', [CandidateWebController::class, 'create'])->name('candidates.create');
 Route::post('/candidates', [CandidateWebController::class, 'store'])->name('candidates.store');
 Route::get('/candidates/{id}', [CandidateWebController::class, 'show'])->name('candidates.show');
+Route::get('/candidates/{id}/add-skills', [CandidateWebController::class, 'addSkills'])->name('candidates.addSkills');
+Route::post('/candidates/{id}/skills', [CandidateWebController::class, 'storeSkills'])->name('candidates.storeSkills');
+Route::post('/candidates/{id}/toggle-active', [CandidateWebController::class, 'toggleActive'])->name('candidates.toggleActive');
 
 // Client View Routes
 Route::prefix('client/{recruiterId}')->name('client.')->group(function () {

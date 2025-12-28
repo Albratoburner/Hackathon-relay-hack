@@ -51,8 +51,8 @@
             <div class="mb-4">
                 <h3 class="text-xl font-semibold">{{ $candidate->full_name }}</h3>
                 <p class="text-sm text-gray-600">{{ $candidate->email }}</p>
-                @if($candidate->phone_number)
-                    <p class="text-sm text-gray-600">{{ $candidate->phone_number }}</p>
+                @if($candidate->phone)
+                    <p class="text-sm text-gray-600">{{ $candidate->phone }}</p>
                 @endif
             </div>
 

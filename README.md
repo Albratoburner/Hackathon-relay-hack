@@ -1,4 +1,4 @@
-# RealyHack — Intelligent Candidate Ranking Subsystem
+# RealyHack: Intelligent Candidate Ranking Subsystem
 
 This repository contains a database-centric subsystem for staffing software focused on candidate sourcing, screening, shortlisting and assignment ranking. The project is implemented with Laravel (PHP) and MS SQL Server stored procedures that accept and return JSON payloads for business logic.
 
@@ -101,21 +101,10 @@ php artisan test
 
 Focus tests: [tests/Feature/RankingApiTest.php](tests/Feature/RankingApiTest.php) validates the ranking API behavior.
 
-**Presentation & Demo Tips**
-- Include a short (2–5 minute) demo video showing: job creation, running ranking, and viewing candidate score breakdown.
-- Add screenshots of the ranking results and the SQL JSON input/output examples.
-
 **Future enhancements**
 - Add a .NET API wrapper to demonstrate cross-stack integration with the stored procedure.
 - Angular front-end option for a single-page recruiter UI.
 - Timesheets, invoicing and payroll integration to expand the lifecycle coverage.
 
-**Contributing**
-Contributions are welcome — please open an issue or a pull request with a short description of the change and a test or example.
 
-**License**
-This project is provided for demonstration; add a license file if you plan to publish or share it externally.
 
----
-
-If you want, I can also: add demo screenshots, generate a short demo script, or create a simple .NET wrapper that calls the stored procedure. Tell me which one to do next.

@@ -8,7 +8,7 @@
     <div class="flex flex-wrap gap-2 text-xs">
         <span class="text-gray-600">📍 {{ $candidate->location ?? 'N/A' }}</span>
         <span class="px-2 py-1 rounded-full
-            {{ $candidate->availability_status == 'available' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}
-        ">{{ ucfirst($candidate->availability_status ?? 'Unknown') }}</span>
+            {{ $candidate->availability_type == 'full-time' || $candidate->availability_type == 'immediate' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}
+        ">{{ ucfirst(str_replace('-', ' ', $candidate->availability_type ?? 'Unknown')) }}</span>
     </div>
 </div>

@@ -20,6 +20,8 @@ Route::prefix('jobs')->name('jobs.')->group(function () {
     Route::get('/', [JobController::class, 'index'])->name('index');
     Route::get('/{id}', [JobController::class, 'show'])->name('show');
     Route::post('/{id}/rank', [JobController::class, 'rank'])->name('rank');
+    Route::get('/{id}/confirm-hire/{candidateId}', [JobController::class, 'confirmHire'])->name('confirmHire');
+    Route::post('/{id}/assign', [JobController::class, 'assign'])->name('assign');
 });
 
 // Candidate listing and profile

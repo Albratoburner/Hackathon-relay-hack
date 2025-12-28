@@ -40,7 +40,7 @@
                         <a href="/jobs/{{ $job->job_id }}" class="text-lg font-semibold text-gray-800 hover:text-blue-600 transition">
                             {{ $job->job_title }}
                         </a>
-                        <p class="text-sm text-gray-600">{{ $job->client_name ?? 'N/A' }} • {{ $job->location ?? 'Remote' }}</p>
+                        <p class="text-sm text-gray-600">{{ $job->preferred_location ?? 'Remote' }}</p>
                         <p class="text-xs text-gray-500">Posted {{ $job->posted_date ? \Carbon\Carbon::parse($job->posted_date)->diffForHumans() : 'recently' }}</p>
                     </div>
                 @endforeach

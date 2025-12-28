@@ -17,10 +17,8 @@
                 <div class="flex flex-wrap gap-3 text-sm">
                     <span class="text-gray-600">📍 {{ $candidate->location ?? 'N/A' }}</span>
                     <span class="px-3 py-1 rounded-full text-xs font-semibold
-                        {{ $candidate->availability_status == 'available' ? 'bg-green-100 text-green-800' : '' }}
-                        {{ $candidate->availability_status == 'employed' ? 'bg-yellow-100 text-yellow-800' : '' }}
-                        {{ $candidate->availability_status == 'unavailable' ? 'bg-red-100 text-red-800' : '' }}
-                    ">{{ ucfirst($candidate->availability_status ?? 'Unknown') }}</span>
+                        {{ in_array($candidate->availability_type, ['full-time', 'immediate', 'part-time']) ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}
+                    ">{{ ucfirst(str_replace('-', ' ', $candidate->availability_type ?? 'Unknown')) }}</span>
                 </div>
             </div>
             <div class="mt-4 md:mt-0">

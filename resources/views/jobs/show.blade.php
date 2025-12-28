@@ -15,8 +15,7 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <h1 class="text-3xl font-bold mb-2 text-gray-800">{{ $job->job_title }}</h1>
                 <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-                    <span>📍 {{ $job->location ?? 'Remote' }}</span>
-                    <span>🏢 {{ $job->client_name ?? 'N/A' }}</span>
+                    <span>📍 {{ $job->preferred_location ?? 'Remote' }}</span>
                     <span>📅 Posted {{ $job->posted_date ? \Carbon\Carbon::parse($job->posted_date)->format('M d, Y') : 'N/A' }}</span>
                     <span class="px-2 py-1 rounded text-xs font-semibold
                         {{ $job->status == 'open' ? 'bg-green-100 text-green-800' : '' }}

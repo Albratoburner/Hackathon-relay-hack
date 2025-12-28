@@ -12,8 +12,7 @@
         </a>
     </h3>
     <p class="text-sm text-gray-600 mb-3">
-        🏢 {{ $job->client_name ?? 'N/A' }}<br>
-        📍 {{ $job->location ?? 'Remote' }}
+        📍 {{ $job->preferred_location ?? 'Remote' }}
     </p>
     <p class="text-xs text-gray-500">
         Posted {{ $job->posted_date ? \Carbon\Carbon::parse($job->posted_date)->diffForHumans() : 'N/A' }}

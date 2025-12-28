@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\JobOrder;
 use App\Models\Skill;
+use App\Models\CandidateAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Carbon\Carbon;
 
 class JobController extends Controller
 {
@@ -115,5 +118,60 @@ class JobController extends Controller
             return redirect()->route('jobs.show', $id)
                 ->with('error', 'Error executing ranking: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Show confirmation page before hiring.
+     */
+    public function confirmHire($id, $candidateId)
+    {
+        $job = JobOrder::findOrFail($id);
+        $candidate = \App\Models\Candidate::with([
+            'skills.skill',
+            'skills.level'
+        ])->findOrFail($candidateId);
+
+        // Try to get the ranking score if available
+        $score = \App\Models\RankingHistory::where('job_id', $id)
+            ->where('candidate_id', $candidateId)
+            ->orderBy('execution_date', 'desc')
+            ->first();
+
+        return view('jobs.confirm-hire', compact('job', 'candidate', 'score'));
+    }
+
+    /**
+     * Assign a candidate to a job and mark as filled.
+     */
+    public function assign(Request $request, $id)
+    {
+        $request->validate([
+            'candidate_id' => ['required', 'integer', Rule::exists('candidates', 'candidate_id')],
+            'start_date' => ['nullable', 'date'],
+            'notes' => ['nullable', 'string'],
+        ]);
+
+        $job = JobOrder::findOrFail($id);
+
+        if ($job->status === 'filled') {
+            return redirect()->route('jobs.show', $id)
+                ->with('error', 'Job is already filled.');
+        }
+
+        DB::transaction(function() use ($request, $job) {
+            CandidateAssignment::create([
+                'candidate_id' => $request->input('candidate_id'),
+                'job_id' => $job->job_id,
+                'start_date' => $request->input('start_date') ? Carbon::parse($request->input('start_date')) : Carbon::today(),
+                'status' => 'active',
+                'notes' => $request->input('notes'),
+            ]);
+
+            $job->status = 'filled';
+            $job->save();
+        });
+
+        return redirect()->route('jobs.show', $id)
+            ->with('success', 'Candidate assigned and job marked as filled.');
     }
 }

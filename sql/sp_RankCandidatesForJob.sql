@@ -64,11 +64,11 @@ BEGIN
         SELECT
             cp.candidate_id,
             CASE WHEN @TotalWeight > 0 THEN
-                CAST((SUM(rs.weight * (cs.proficiency_level / 5.0) * ISNULL(sl.multiplier, 1.0) *
-                    (1 + (CASE WHEN cs.years_of_experience > 5 THEN 5 ELSE cs.years_of_experience END) * 0.05)
-                ) / @TotalWeight) * 40.0 AS DECIMAL(5,2))
+                CAST((ISNULL(SUM(rs.weight * (cs.proficiency_level / 5.0) * ISNULL(sl.multiplier, 1.0) *
+                    (1 + (CASE WHEN cs.years_of_experience > 5 THEN 5 ELSE ISNULL(cs.years_of_experience, 0) END) * 0.05)
+                ), 0) / @TotalWeight) * 40.0 AS DECIMAL(5,2))
             ELSE 20.0 END,
-            COUNT(DISTINCT rs.skill_name)
+            ISNULL(COUNT(DISTINCT rs.skill_name), 0)
         FROM #CandidatePool cp
         LEFT JOIN dbo.candidate_skills cs ON cp.candidate_id = cs.candidate_id
         LEFT JOIN dbo.skills s ON cs.skill_id = s.skill_id

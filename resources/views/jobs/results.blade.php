@@ -36,6 +36,7 @@
                             <th class="px-4 py-3 text-right font-semibold">Availability</th>
                             <th class="px-4 py-3 text-right font-semibold">Location</th>
                             <th class="px-4 py-3 text-right font-semibold">Cultural Fit</th>
+                            <th class="px-4 py-3 text-center font-semibold">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +54,18 @@
                                 <td class="px-4 py-3 text-right text-gray-700">{{ number_format($candidate->availability_score, 2) }}</td>
                                 <td class="px-4 py-3 text-right text-gray-700">{{ number_format($candidate->location_score, 2) }}</td>
                                 <td class="px-4 py-3 text-right text-gray-700">{{ number_format($candidate->cultural_fit_score, 2) }}</td>
+                                <td class="px-4 py-3 text-center">
+                                    @if($job->status === 'open')
+                                        <a
+                                            href="{{ route('jobs.confirmHire', ['id' => $job->job_id, 'candidateId' => $candidate->candidate_id]) }}"
+                                            class="inline-block bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm font-semibold transition"
+                                        >
+                                            Review & Hire
+                                        </a>
+                                    @else
+                                        <span class="text-xs text-gray-500">Filled</span>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

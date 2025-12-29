@@ -48,18 +48,45 @@
                 @else
                     <form method="POST" action="/jobs/{{ $job->job_id }}/rank">
                         @csrf
+                        
+                        <!-- Required Skills Searchable Multi-select (Alpine.js) -->
+                        <div class="mb-4" x-data="skillsSelector()">
+                            <label class="block text-sm font-semibold mb-2 text-gray-700">Required Skills (Optional)</label>
 
-                        <!-- Required Skills Searchable Multi-select (Tom Select) -->
-                        <div class="mb-4">
-                            <label for="required_skills_select" class="block text-sm font-semibold mb-2 text-gray-700">Required Skills (Optional)</label>
+                            <div class="mb-2">
+                                <input
+                                    x-model="query"
+                                    @input="highlightIndex = 0"
+                                    type="search"
+                                    placeholder="Search skills (type to filter)"
+                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                />
+                            </div>
 
-                            <select id="required_skills_select" name="required_skills[]" multiple placeholder="Search and select skills..." class="w-full">
-                                @foreach($skills as $skill)
-                                    <option value="{{ $skill->skill_id }}">{{ $skill->skill_name }} — {{ $skill->category->category_name ?? 'Other' }}</option>
-                                @endforeach
-                            </select>
+                            <div class="border rounded bg-white max-h-52 overflow-auto">
+                                <template x-for="(skill, idx) in filteredSkills" :key="skill.skill_id">
+                                    <label
+                                        class="flex items-center justify-between px-3 py-2 hover:bg-gray-50 cursor-pointer"
+                                    >
+                                        <div class="flex items-center gap-3">
+                                            <input type="checkbox" :value="skill.skill_id" :id="'skill-'+skill.skill_id" x-model="selected" class="h-4 w-4" />
+                                            <div class="text-sm">
+                                                <div x-text="skill.skill_name" class="font-medium text-gray-800"></div>
+                                                <div x-text="skill.category_name" class="text-xs text-gray-500"></div>
+                                            </div>
+                                        </div>
+                                        <div class="text-xs text-gray-500" x-text="skill.tier ? '(' + skill.tier + ')' : ''"></div>
+                                    </label>
+                                </template>
+                                <div x-show="filteredSkills.length === 0" class="px-3 py-2 text-sm text-gray-500">No skills found.</div>
+                            </div>
 
-                            <p class="text-xs text-gray-600 mt-2">Search and select one or more skills. Selected: <span id="skill-count">0</span></p>
+                            <p class="text-xs text-gray-600 mt-2">Type to filter, click to select. Selected: <span x-text="selected.length"></span></p>
+
+                            <!-- Hidden inputs to submit selected skill IDs -->
+                            <template x-for="id in selected" :key="id">
+                                <input type="hidden" name="required_skills[]" :value="id">
+                            </template>
                         </div>
                         
                         <!-- Max Results -->
@@ -88,29 +115,29 @@
         </div>
     </div>
 </div>
-<!-- Tom Select (CDN) -->
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+@php
+    $skills_for_js = $skills->map(function($s){
+        return [
+            'skill_id' => $s->skill_id,
+            'skill_name' => $s->skill_name,
+            'category_name' => $s->category->category_name ?? 'Other',
+            'tier' => null,
+        ];
+    })->toArray();
+    $skillsJson = json_encode($skills_for_js, JSON_UNESCAPED_UNICODE);
+@endphp
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-    const select = new TomSelect('#required_skills_select', {
-        plugins: ['remove_button'],
-        maxItems: null,
-        persist: false,
-        create: false,
-        render: {
-            option: function(data, escape) {
-                return '<div>' + escape(data.text) + '</div>';
-            }
-        },
-        onItemAdd: updateCount,
-        onItemRemove: updateCount,
-    });
-
-    function updateCount() {
-        const count = select.getValue().length ? select.getValue().length : 0;
-        document.getElementById('skill-count').textContent = count;
+function skillsSelector(){
+    return {
+        query: '',
+        selected: [],
+        skills: {!! $skillsJson !!},
+        get filteredSkills(){
+            if(!this.query) return this.skills;
+            const q = this.query.toLowerCase();
+            return this.skills.filter(s => s.skill_name.toLowerCase().includes(q) || (s.category_name && s.category_name.toLowerCase().includes(q)));
+        }
     }
-});
+}
 </script>

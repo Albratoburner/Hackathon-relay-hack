@@ -38,7 +38,7 @@
         
         <!-- Ranking Panel (right 1/3) -->
         <div class="lg:col-span-1">
-            <div class="bg-blue-50 border border-blue-200 rounded-lg shadow p-6 sticky top-4">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg shadow p-6 md:sticky md:top-28">
                 <h2 class="text-2xl font-bold mb-4 text-gray-800">Rank Candidates</h2>
                 
                 @if($job->status !== 'open')
@@ -48,24 +48,18 @@
                 @else
                     <form method="POST" action="/jobs/{{ $job->job_id }}/rank">
                         @csrf
-                        
-                        <!-- Required Skills Multi-select -->
+
+                        <!-- Required Skills Searchable Multi-select (Tom Select) -->
                         <div class="mb-4">
-                            <label for="required_skills" class="block text-sm font-semibold mb-2 text-gray-700">Required Skills (Optional)</label>
-                            <select 
-                                id="required_skills"
-                                name="required_skills[]" 
-                                multiple 
-                                size="8"
-                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                            >
+                            <label for="required_skills_select" class="block text-sm font-semibold mb-2 text-gray-700">Required Skills (Optional)</label>
+
+                            <select id="required_skills_select" name="required_skills[]" multiple placeholder="Search and select skills..." class="w-full">
                                 @foreach($skills as $skill)
-                                    <option value="{{ $skill->skill_id }}">
-                                        {{ $skill->skill_name }} ({{ $skill->category->category_name ?? 'Other' }})
-                                    </option>
+                                    <option value="{{ $skill->skill_id }}">{{ $skill->skill_name }} — {{ $skill->category->category_name ?? 'Other' }}</option>
                                 @endforeach
                             </select>
-                            <p class="text-xs text-gray-600 mt-1">Hold Ctrl/Cmd to select multiple. Leave empty to rank by all skills.</p>
+
+                            <p class="text-xs text-gray-600 mt-2">Search and select one or more skills. Selected: <span id="skill-count">0</span></p>
                         </div>
                         
                         <!-- Max Results -->
@@ -94,4 +88,29 @@
         </div>
     </div>
 </div>
-@endsection
+<!-- Tom Select (CDN) -->
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    const select = new TomSelect('#required_skills_select', {
+        plugins: ['remove_button'],
+        maxItems: null,
+        persist: false,
+        create: false,
+        render: {
+            option: function(data, escape) {
+                return '<div>' + escape(data.text) + '</div>';
+            }
+        },
+        onItemAdd: updateCount,
+        onItemRemove: updateCount,
+    });
+
+    function updateCount() {
+        const count = select.getValue().length ? select.getValue().length : 0;
+        document.getElementById('skill-count').textContent = count;
+    }
+});
+</script>
